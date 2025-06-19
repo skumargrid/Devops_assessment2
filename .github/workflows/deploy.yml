@@ -106,4 +106,6 @@ jobs:
 
       - name: 🏷️ Tag and Push Docker Image
         run: |
-          docker tag helloapp:latest ${{ secrets.DOCKER_USERNAME }}/helloa_
+         docker tag helloapp:latest ${{ secrets.DOCKER_USERNAME }}/helloappshubham:latest
+         docker push ${{ secrets.DOCKER_USERNAME }}/helloappshubham:latest
+
