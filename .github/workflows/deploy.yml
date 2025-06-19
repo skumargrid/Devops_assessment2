@@ -1,54 +1,86 @@
-name: Build and Push Docker Image
+# name: Build and Push Docker Image
 
+# on:
+#   push:
+#     branches: [main]
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: 📥 Checkout code
+#       uses: actions/checkout@v3
+
+#     - name: 🛠 Set up Docker Buildx
+#       uses: docker/setup-buildx-action@v3
+
+#     - name: 🧱 Build Docker Image
+#       run: |
+#         docker build -t helloapp:latest .
+
+#     - name: 📦 Save Docker image as tar file
+#       run: |
+#         docker save helloapp:latest -o helloapp.tar
+
+#     - name: ⬆️ Upload Docker image as artifact
+#       uses: actions/upload-artifact@v4
+#       with:
+#         name: helloapp-image
+#         path: helloapp.tar
+
+#   push:
+#     runs-on: ubuntu-latest
+#     needs: build
+
+#     steps:
+#     - name: 📥 Checkout code
+#       uses: actions/checkout@v3
+
+#     - name: ⬇️ Download Docker image artifact
+#       uses: actions/download-artifact@v4
+#       with:
+#         name: helloapp-image
+
+#     - name: 📦 Load Docker image from tar
+#       run: docker load -i helloapp.tar
+
+#     - name: 🔐 Login to DockerHub
+#       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+#     - name: 🏷️ Tag and Push Docker Image
+#       run: |
+#         docker tag helloapp:latest ${{ secrets.DOCKER_USERNAME }}/helloappshubham:latest
+#         docker push ${{ secrets.DOCKER_USERNAME }}/helloappshubham:latest
+
+
+name: Docker Build and Push Workflow
 on:
   push:
-    branches: [main]
-
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]  # Runs build only on PR to main
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    outputs:
+      image-name: ${{ steps.set-output.outputs.image }}
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v3
-
-    - name: 🛠 Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: 🧱 Build Docker Image
-      run: |
-        docker build -t helloapp:latest .
-
-    - name: 📦 Save Docker image as tar file
-      run: |
-        docker save helloapp:latest -o helloapp.tar
-
-    - name: ⬆️ Upload Docker image as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: helloapp-image
-        path: helloapp.tar
-
+      - name: :incoming_envelope: Checkout code
+        uses: actions/checkout@v3
+      - name: :hammer_and_wrench: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: :hammer: Build Docker Image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/helloappshubham:latest .
+      - name: :package: Save image name for next job
+        id: set-output
+        run: echo "image=${{ secrets.DOCKER_USERNAME }}/helloappshubham:latest" >> $GITHUB_OUTPUT
   push:
-    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
-
+    runs-on: ubuntu-latest
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v3
-
-    - name: ⬇️ Download Docker image artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: helloapp-image
-
-    - name: 📦 Load Docker image from tar
-      run: docker load -i helloapp.tar
-
-    - name: 🔐 Login to DockerHub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-
-    - name: 🏷️ Tag and Push Docker Image
-      run: |
-        docker tag helloapp:latest ${{ secrets.DOCKER_USERNAME }}/helloappshubham:latest
-        docker push ${{ secrets.DOCKER_USERNAME }}/helloappshubham:latest
+      - name: :closed_lock_with_key: Login to DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - name: :outbox_tray: Push Docker Image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/helloappshubham:latest
