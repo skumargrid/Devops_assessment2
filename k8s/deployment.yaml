@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: static-html-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: static-html
+  template:
+    metadata:
+      labels:
+        app: static-html
+    spec:
+      containers:
+        - name: static-html-container
+          image: shukumar30/helloappshubham:latest
+          ports:
+            - containerPort: 3000
