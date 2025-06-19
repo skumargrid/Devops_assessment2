@@ -81,6 +81,12 @@ Then access in your browser:
 
 ## 🖼️ Screenshots
 
+### 📄 Pipeline When Code Pushed
+![Github Action Pushed](images/Screenshot-when-push.png)
+
+### 📄 Pipeline When Code Pulled
+![Github Action Pulled](images/Screenshot-when-pull.png)
+
 ### 🏠 Home Page
 ![Home Page](images/screenshot-home.png)
 
