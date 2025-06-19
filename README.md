@@ -8,6 +8,15 @@ This project demonstrates a complete CI/CD pipeline using **GitHub Actions** to 
 
 ---
 
+## 🧑‍🤝‍🧑 Team Contribution
+
+| Member      | Responsibility                                                               |
+|-------------|-------------------------------------------------------------------------------|
+| **Shubham** | GitHub Actions CI/CD setup, Docker image creation, Docker Hub integration     |
+| **Himanshu** | Kubernetes Deployment, Service, and Ingress configuration for exposing app    |
+
+---
+
 ## CI/CD Pipeline Overview
 
 | Step                  | Action                                                                 |
@@ -96,3 +105,5 @@ Image pushed to Docker Hub:
 kubectl apply -f k8s/deployment.yaml
 kubectl apply -f k8s/service.yaml
 kubectl apply -f k8s/ingress.yaml
+
+
